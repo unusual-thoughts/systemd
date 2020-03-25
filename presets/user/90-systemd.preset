@@ -19,3 +19,4 @@ enable systemd-tmpfiles-clean.timer
 
 disable graphical-session-pre.target
 disable graphical-session.target
+disable xdg-desktop.target

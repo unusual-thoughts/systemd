@@ -2225,6 +2225,23 @@ if conf.get('HAVE_SYSV_COMPAT') == 1
                    install_dir : systemgeneratordir)
 endif
 
+executable('systemd-xdg-autostart-generator',
+           'src/xdg-autostart-generator/xdg-autostart-generator.c',
+           include_directories : includes,
+           link_with : [libshared],
+           install_rpath : rootlibexecdir,
+           install : true,
+           install_dir : usergeneratordir)
+
+executable('systemd-xdg-autostart-condition',
+           'src/xdg-autostart-generator/xdg-autostart-condition.c',
+           include_directories : includes,
+           link_with : [libshared],
+           install_rpath : rootlibexecdir,
+           install : true,
+           install_dir : rootlibexecdir)
+
+
 if conf.get('ENABLE_HOSTNAMED') == 1
         executable('systemd-hostnamed',
                    'src/hostname/hostnamed.c',

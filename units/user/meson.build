@@ -18,6 +18,7 @@ units = [
         'systemd-tmpfiles-clean.timer',
         'systemd-tmpfiles-setup.service',
         'timers.target',
+        'xdg-desktop-autostart.target',
 ]
 
 foreach file : units
