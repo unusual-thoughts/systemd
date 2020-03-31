@@ -649,6 +649,19 @@ int xdg_autostart_service_generate_unit(
                         e_not_show_in);
         }
 
+        /* Generate an ExecCondition for KDE autostart condition */
+        if (!isempty(service->kde_autostart_condition)) {
+                _cleanup_free_ char *kde_autostart_condition_path = NULL;
+                if (find_binary("kde-systemd-start-condition", &kde_autostart_condition_path) < 0) {
+                        fprintf(f,
+                                "ExecCondition=%s \"%s\"",
+                                kde_autostart_condition_path,
+                                service->kde_autostart_condition);
+                } else {
+                        log_warning_errno(r, "kde-systemd-start-condition not found: %m");
+                }
+        }
+
         (void) generator_add_symlink(dest, "xdg-desktop-autostart.target", "wants", service->name);
 
         return 0;
