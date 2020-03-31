@@ -652,11 +652,16 @@ int xdg_autostart_service_generate_unit(
         /* Generate an ExecCondition for KDE autostart condition */
         if (!isempty(service->kde_autostart_condition)) {
                 _cleanup_free_ char *kde_autostart_condition_path = NULL;
+                _cleanup_free_ char *e_kde_autostart_condition = NULL;
+
                 if (find_binary("kde-systemd-start-condition", &kde_autostart_condition_path) < 0) {
+                        e_kde_autostart_condition = cescape(service->kde_autostart_condition);
+                        if (!e_kde_autostart_condition)
+                                return log_oom();
                         fprintf(f,
                                 "ExecCondition=%s \"%s\"",
                                 kde_autostart_condition_path,
-                                service->kde_autostart_condition);
+                                e_kde_autostart_condition);
                 } else {
                         log_warning_errno(r, "kde-systemd-start-condition not found: %m");
                 }
