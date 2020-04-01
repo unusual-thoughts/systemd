@@ -10,4 +10,5 @@
 [Unit]
 Description=Startup of XDG autostart applications
 Documentation=man:systemd.special(7)
+RefuseManualStart=yes
 StopWhenUnneeded=yes
