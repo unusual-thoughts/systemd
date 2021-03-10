@@ -3523,6 +3523,7 @@ static void service_sigchld_event(Unit *u, pid_t pid, int code, int status) {
                                 break;
 
                         default:
+                                log_unit_error(u, "Status is %s", service_state_to_string(s->state));
                                 assert_not_reached("Uh, main process died at wrong time.");
                         }
                 }
