@@ -1621,18 +1621,25 @@ static int control_pid_good(Service *s) {
         return s->control_pid > 0;
 }
 
-static int cgroup_good(Service *s) {
-        int r;
-
+static int cgroup_empty(Service *s) {
         assert(s);
 
-        /* Returns 0 if the cgroup is empty or doesn't exist, > 0 if it is exists and is populated, < 0 if we can't
-         * figure it out */
+        /* Returns 0 if there is no cgroup, > 0 if is empty or doesn't exist, < 0 if we can't figure it out */
 
         if (!UNIT(s)->cgroup_path)
                 return 0;
 
-        r = cg_is_empty_recursive(SYSTEMD_CGROUP_CONTROLLER, UNIT(s)->cgroup_path);
+        return cg_is_empty_recursive(SYSTEMD_CGROUP_CONTROLLER, UNIT(s)->cgroup_path);
+}
+
+
+static int cgroup_good(Service *s) {
+        int r;
+
+        /* Returns 0 if the cgroup is empty or doesn't exist, > 0 if it is exists and is populated, < 0 if we can't
+         * figure it out */
+
+        r = cgroup_empty(s);
         if (r < 0)
                 return r;
 
@@ -3405,7 +3412,7 @@ static void service_sigchld_event(Unit *u, pid_t pid, int code, int status) {
         }
 
         if ((s->exit_type == SERVICE_EXIT_MAIN && s->main_pid == pid) ||
-            (s->exit_type == SERVICE_EXIT_CGROUP && cg_is_empty_recursive(SYSTEMD_CGROUP_CONTROLLER, u->cgroup_path))) {
+            (s->exit_type == SERVICE_EXIT_CGROUP && cgroup_empty(s) && !control_pid_good(s))) {
                 /* Forking services may occasionally move to a new PID.
                  * As long as they update the PID file before exiting the old
                  * PID, they're fine. */
